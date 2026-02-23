@@ -1,4 +1,4 @@
-# Demo & notes in Rust 🦀
+# Directory Traversal in Rust 🦀
 
 ```bash
 cargo run
@@ -24,7 +24,8 @@ Boom! The server again responds with the contents of our simulated /etc/passwd f
 
 root:x:0:0:root:/root:/bin/bash
 
-----
+---
+
 Directory Traversal Under the Hood: The Vulnerable Code
 The vulnerability exists because we blindly trust user input. The change to using App::service() doesn't alter the core problem. The handler function is what matters:
 
@@ -34,11 +35,12 @@ Rust
 let filename: String = req.match_info().get("filename").unwrap().to_string();
 
 // 2. The untrusted `filename` is joined with the base directory.
-//    PathBuf::join has no concept of security boundaries. It just
-//    follows filesystem rules. `public/` + `../../etc/passwd` becomes
-//    `public/../../etc/passwd`, which the OS resolves correctly.
+// PathBuf::join has no concept of security boundaries. It just
+// follows filesystem rules. `public/` + `../../etc/passwd` becomes
+// `public/../../etc/passwd`, which the OS resolves correctly.
 let file_path = PathBuf::from("./public/").join(&filename);
 The root cause is unchanged: the application forwards unvalidated input from the web request directly to a filesystem API.
+
 ---
 
 ## The Fix
